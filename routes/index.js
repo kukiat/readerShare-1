@@ -57,7 +57,7 @@ router.post('/register', function(req, res, next) {
   const name = req.body.name
   const email = req.body.email
   const hash_password = bcrypt.hashSync(req.body.password, 10)
-  
+  //kuy
   if(!user){
     client.query(text, values)
     .then(users => res.status(200).send('register success'))

@@ -4,7 +4,6 @@ var bcrypt = require('bcrypt')
 var router = express.Router();
 var Model = require('../model/model');
 
-
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });

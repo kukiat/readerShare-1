@@ -4,16 +4,19 @@ var bcrypt = require('bcrypt')
 
 var router = express.Router();
 
+var feed = require('../feed')
+var getFeed = require('../getFeed')
+
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
 
 router.get('/feeds', function(req, res,next) {
-  res.json(res)
+  res.json(feed.getFeed())
 })
 
 router.get('/review/:id', function(req, res,next) {
-  res.json()
+  res.json(getFeed.findFeed())
 })
 
 router.post('/post', function(req, res,next) {

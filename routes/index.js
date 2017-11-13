@@ -16,7 +16,7 @@ router.get('/feeds', function(req, res,next) {
 })
 
 router.get('/review/:id', function(req, res,next) {
-  res.json(getFeed.findFeed())
+  res.json(getFeed.findFeed(req.params.id))
 })
 
 router.post('/post', function(req, res,next) {

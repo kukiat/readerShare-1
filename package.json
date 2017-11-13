@@ -15,8 +15,6 @@
     "jsonwebtoken": "^8.1.0",
     "morgan": "~1.8.1",
     "node-sass-middleware": "0.9.8",
-    "nodemon": "^1.12.1",
-    "pg": "^7.4.0",
     "serve-favicon": "~2.4.2"
   }
 }

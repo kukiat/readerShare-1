@@ -1,34 +1,38 @@
 var express = require('express');
 var jwt = require('jsonwebtoken')
 var bcrypt = require('bcrypt')
-
 var router = express.Router();
-
-var feed = require('../feed')
-var getFeed = require('../getFeed')
+var Model = require('../model/model');
+var feed = require('../utils/feed')
+var getFeed = require('../utils/getFeed')
 
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
 
-router.get('/feeds', function(req, res,next) {
+router.get('/feeds', function(req, res, next) {
   res.json(feed.getFeed())
 })
 
-router.get('/review/:id', function(req, res,next) {
+router.get('/review/:id', function(req, res, next) {
   res.json(getFeed.findFeed())
 })
 
-router.post('/post', function(req, res,next) {
+router.post('/post', function(req, res, next) {
   res.json()
 })
 
-router.post('/comment', function(req, res,next) {
+router.post('/comment', function(req, res, next) {
   res.json()
 })
 
-router.post('/subscribe', function(req, res,next) {
+router.post('/subscribe', function(req, res, next) {
   res.json()
+})
+
+router.post('/testpush',function(req, res, next){
+  Model.testPush(req.body);
+  res.send('testPush')
 })
 
 router.post('/login', function(req, res, next) {

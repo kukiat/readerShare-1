@@ -14,8 +14,8 @@ router.get('/feeds', function(req, res, next) {
   res.json(feed.getFeed())
 })
 
-router.get('/review/:id', function(req, res, next) {
-  res.json(getFeed.findFeed())
+router.get('/review/:id', function(req, res,next) {
+  res.json(getFeed.findFeed(req.params.id))
 })
 
 router.post('/post', function(req, res, next) {

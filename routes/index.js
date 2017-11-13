@@ -3,18 +3,19 @@ var jwt = require('jsonwebtoken')
 var bcrypt = require('bcrypt')
 var router = express.Router();
 var Model = require('../model/model');
-var feed = require('../utils/feed')
-var getFeed = require('../utils/getFeed')
+
 
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
 
 router.get('/feeds', function(req, res, next) {
+  let feed = require('../utils/feed')
   res.json(feed.getFeed())
 })
 
-router.get('/review/:id', function(req, res,next) {
+router.get('/review/:id', function(req, res, next) {
+  let getFeed = require('../utils/getFeed')
   res.json(getFeed.findFeed(req.params.id))
 })
 
@@ -33,6 +34,10 @@ router.post('/subscribe', function(req, res, next) {
 router.post('/testpush',function(req, res, next){
   Model.testPush(req.body);
   res.send('testPush')
+})
+router.get('/testretrieve',function(req, res, next){
+  Model.testRetrieve();
+  res.send('testRetrieve')
 })
 
 router.post('/login', function(req, res, next) {
@@ -58,20 +63,16 @@ router.post('/login', function(req, res, next) {
     })
   }
 })
-// CREATE TABLE user(id SERIAL PRIMARY KEY, email VARCHAR(40) not null, password VARCHAR(100) not null ,name VARCHAR(40) not null);
 router.post('/register', function(req, res, next) {
-  //need to validate
   const name = req.body.name
   const email = req.body.email
-  const hash_password = bcrypt.hashSync(req.body.password, 10)
-  //kuy
-  if(!user){
-    client.query(text, values)
-    .then(users => res.status(200).send('register success'))
-    .catch(err => console.error(err.stack))
-  }else if(user){
-    res.status(422).send('already use email')
-  }
+  const password_hashed = bcrypt.hashSync(req.body.password, 10)
+
+  Model.register(email, password_hashed).then((data)=>{
+    res.send(data)
+  }).catch((data)=>{
+    res.send(data)
+  })
 })
 
 router.post('/whoami', function(req, res, next) {

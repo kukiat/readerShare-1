@@ -4,6 +4,7 @@ var bcrypt = require('bcrypt')
 var router = express.Router();
 var Model = require('../model/model');
 
+
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
@@ -27,7 +28,8 @@ router.post('/comment', function(req, res, next) {
 })
 
 router.post('/subscribe', function(req, res, next) {
-  res.json()
+  Model.notification()
+  res.send('ok')
 })
 
 router.post('/testpush',function(req, res, next){

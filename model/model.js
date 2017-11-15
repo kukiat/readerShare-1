@@ -1,7 +1,13 @@
 var admin = require("firebase-admin");
+var firebase = require('firebase')
 var serviceAccount = require("../utils/readershare-1-firebase-adminsdk-vjyk4-83d561f008.json");
 var MicroGear = require('microgear')
-
+firebase.initializeApp({
+	apiKey: "",
+  authDomain: "",
+  databaseURL: "",
+  storageBucket: ""
+})
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
   databaseURL: "https://readershare-1.firebaseio.com"
@@ -29,24 +35,37 @@ module.exports = {
 		return await new Promise((resolve, reject)=>{
 			isNotHasUser(email).then(()=>{
 				admin.auth().createUser({email, password_hashed})
-				.then(function(userRecord) {resolve('success')})
+				.then(function(userRecord) {
+					console.log(userRecord)
+					resolve('success')
+				})
 				.catch(function(error) {reject('failed')});
 			}).catch(()=>{
 				reject('This email is exist');
 			})
 		})
 	},
-	notification: function() {
+	notification: async function() {
 		microgear.connect('noti')
 		microgear.on('connected', function() {
-			console.log('test')
-			microgear.publish('/message','eieieeiieieie.')
+			microgear.publish('/message', 'notification from server.')
 			microgear.disconnect()
 		})
+	},
+	login: function(email, password) {
+		console.log(email+password)
+		
+		firebase.auth().signInWithEmailAndPassword(email, password)
+				.then(user => {
+					console.log(user)
+				})
+				.catch(err => {
+					console.log(err)
+				})
+		
 	}
 }
-
-async function isNotHasUser(email){
+async function isNotHasUser(email) {
 	return await new Promise(function(resolve, reject){
 		admin.auth().getUserByEmail(email)
 		  .then(function(userRecord) {

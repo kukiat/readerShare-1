@@ -15,12 +15,19 @@ router.get('/feeds', function(req, res, next) {
 })
 
 router.get('/review/:id', function(req, res, next) {
-  let getFeed = require('../utils/getFeed')
-  res.json(getFeed.findFeed(req.params.id))
+  // let getFeed = require('../utils/getFeed')
+  Model.getReview()
 })
 
 router.post('/post', function(req, res, next) {
-  res.json()
+  Model.postReview({
+    uId: req.body.uId, 
+    bookName: req.body.bookName, 
+    reviewTitle: req.body.reviewTitle, 
+    reviewContent: req.body.reviewContent
+  })
+    .then(data => res.status(200).send(data))
+    .catch(data => res.status(400).send(data))
 })
 
 router.post('/comment', function(req, res, next) {

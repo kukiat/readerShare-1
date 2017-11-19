@@ -10,12 +10,12 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/feeds', function(req, res, next) {
-  let feed = require('../utils/feed')
-  res.json(feed.getFeed())
+  Model.getAllReview()
+  .then((data)=>res.send(data))
+  .catch((err)=>res.send(err))
 })
 
 router.get('/review/:reviewId', function(req, res, next) {
-  // let getFeed = require('../utils/getFeed')
   Model.getReview(req.params.reviewId)
   .then(data => res.status(200).send(data))
   .catch(data => res.status(404).send(data))
@@ -39,18 +39,6 @@ router.post('/comment', function(req, res, next) {
 router.post('/subscribe', function(req, res, next) {
   Model.notification()
   res.send('ok')
-})
-
-router.post('/register', function(req, res, next) {
-  const name = req.body.name
-  const email = req.body.email
-  const password_hashed = bcrypt.hashSync(req.body.password, 10)
-
-  Model.register(email, password_hashed).then((data)=>{
-    res.status(200).send(data)
-  }).catch((data)=>{
-    res.status(401).send(data)
-  })
 })
 
 module.exports = router;

@@ -23,20 +23,6 @@ var microgear = MicroGear.create({
 });
 
 module.exports = {
-	register : async function(email, password_hashed){
-		return await new Promise((resolve, reject)=>{
-			isNotHasUser(email).then(()=>{
-				admin.auth().createUser({email, password_hashed})
-				.then(function(userRecord) {
-					console.log(userRecord)
-					resolve('success')
-				})
-				.catch(function(error) {reject('failed')});
-			}).catch(()=>{
-				reject('This email is exist');
-			})
-		})
-	},
 	notification: () => {
 		microgear.connect('noti')
 		microgear.on('connected', () => {
@@ -44,13 +30,27 @@ module.exports = {
 			microgear.disconnect()
 		})
 	},
+	getAllReview: async function() {
+		return await new Promise((resolve, reject) =>{
+			database.ref('post').once('value')
+			.then((s)=>{
+				const data = []
+				const x = s.forEach((cs)=> {
+					const reviewKey = cs.key
+					const reviewDetail = s.child(reviewKey).val()
+					const review = {...reviewDetail, ...{'id': reviewKey} }
+					data.push(review)
+				})
+				resolve(data)
+			})
+			.catch((err)=>reject(err))
+		})
+	},
 	getReview: async function(reviewId) {
-		console.log(reviewId)
 		return await new Promise((resolve,reject)=>{
-			database.ref('/posts').on('value')
+			database.ref('post').once('value')
 			.then((s) => {
-				console.log(s.val())
-				resolve(s.val())
+				resolve({...s.child(reviewId).val(), ...{'id': reviewId}})
 			})
 			.catch(err => reject(err))
 		})
@@ -58,10 +58,6 @@ module.exports = {
 	postReview: async (review) => {
 		return await new Promise((resolve, reject) => {
 			const refPost = database.ref('post')
-			// const _book = refPost.push({
-			// 	name: review.bookName,
-			// 	image: "url"
-			// })
 			const data = {
 				reviewer: {
 					id: review.uId
@@ -72,9 +68,9 @@ module.exports = {
 				},
 				review:	{
 					title: review.reviewTitle,
+					content: review.reviewContent,
 					rating: 0,
 					like: 0,
-					content: review.reviewContent
 				},
 				comment:[]
 			}
@@ -82,15 +78,5 @@ module.exports = {
 			resolve('post success')
 		}).catch(err => reject(err))
 	}
-}
-async function isNotHasUser(email) {
-	return await new Promise(function(resolve, reject){
-		admin.auth().getUserByEmail(email)
-		  .then(function(userRecord) {
-		    reject()
-		  }).catch(function(error) {
-		    resolve()
-		  });
-	})
 }
 

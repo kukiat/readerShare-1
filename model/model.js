@@ -23,16 +23,6 @@ var microgear = MicroGear.create({
 });
 
 module.exports = {
-	testPush : function(object){
-		db.ref("posts").child("post").set(object);
-	},
-	testRetrieve : function(){
-		db.ref("posts").on("value", function(snapshot) {
-		  console.log(snapshot.val());
-		}, function (errorObject) {
-		  console.log("The read failed: " + errorObject.code);
-		})
-	},
 	register : async function(email, password_hashed){
 		return await new Promise((resolve, reject)=>{
 			isNotHasUser(email).then(()=>{
@@ -47,30 +37,48 @@ module.exports = {
 			})
 		})
 	},
-	notification: async function() {
+	notification: () => {
 		microgear.connect('noti')
-		microgear.on('connected', function() {
+		microgear.on('connected', () => {
 			microgear.publish('/message', 'notification from server.')
 			microgear.disconnect()
 		})
 	},
-	login: function(email, password) {
-		console.log(email+password)
-		
-		firebase.auth().signInWithEmailAndPassword(email, password)
-				.then(user => {
-					console.log(user)
-				})
-				.catch(err => {
-					console.log(err)
-				})
+	getReview: async function(reviewId) {
+		console.log(reviewId)
+		return await new Promise((resolve,reject)=>{
+			database.ref('/posts').on('value')
+			.then((s) => {
+				console.log(s.val())
+				resolve(s.val())
+			})
+			.catch(err => reject(err))
+		})
 	},
-	getReview: function(id) {
-
-	},
-	postReview: async function(review) {
-		return await new Promise((resolve, reject)=>{
-			database.ref("post").push(review)
+	postReview: async (review) => {
+		return await new Promise((resolve, reject) => {
+			const refPost = database.ref('post')
+			// const _book = refPost.push({
+			// 	name: review.bookName,
+			// 	image: "url"
+			// })
+			const data = {
+				reviewer: {
+					id: review.uId
+				},
+				book: {
+					name: review.bookName,
+					image: "url"
+				},
+				review:	{
+					title: review.reviewTitle,
+					rating: 0,
+					like: 0,
+					content: review.reviewContent
+				},
+				comment:[]
+			}
+			refPost.push(data)
 			resolve('post success')
 		}).catch(err => reject(err))
 	}

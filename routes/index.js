@@ -14,9 +14,11 @@ router.get('/feeds', function(req, res, next) {
   res.json(feed.getFeed())
 })
 
-router.get('/review/:id', function(req, res, next) {
+router.get('/review/:reviewId', function(req, res, next) {
   // let getFeed = require('../utils/getFeed')
-  Model.getReview()
+  Model.getReview(req.params.reviewId)
+  .then(data => res.status(200).send(data))
+  .catch(data => res.status(404).send(data))
 })
 
 router.post('/post', function(req, res, next) {
@@ -39,24 +41,6 @@ router.post('/subscribe', function(req, res, next) {
   res.send('ok')
 })
 
-router.post('/testpush',function(req, res, next){
-  Model.testPush(req.body);
-  res.send('testPush')
-})
-router.get('/testretrieve',function(req, res, next){
-  Model.testRetrieve();
-  res.send('testRetrieve')
-})
-
-router.post('/login', function(req, res, next) {
-  //authen 
-  const email = req.body.email
-  const password = req.body.password
-  Model.login(email, password)
-    .then((data)=>res.status(200).send(data))
-    .catch((err)=>res.status(401).send(err))
-  
-})
 router.post('/register', function(req, res, next) {
   const name = req.body.name
   const email = req.body.email

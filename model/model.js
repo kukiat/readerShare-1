@@ -1,6 +1,6 @@
 var firebase = require('firebase')
 var MicroGear = require('microgear')
-var database = firebase.database();
+
 
 firebase.initializeApp({
 	apiKey: "AIzaSyCxV1SPVPdDQg539Ir6G0Rn5Y-WgAAgzVs",
@@ -14,6 +14,8 @@ const microgear = MicroGear.create({
 	secret : "tzTRtxJbuejASaIBHWD3snUa3",
 	alias: 'server'
 });
+
+var database = firebase.database();
 
 module.exports = {
 	notification: () => {

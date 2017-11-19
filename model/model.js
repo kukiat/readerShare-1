@@ -15,13 +15,16 @@ admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
   databaseURL: "https://readershare-1.firebaseio.com"
 });
+
+const microgear = MicroGear.create({
+	key : "6xeLdlHHWBuM49O",
+	secret : "tzTRtxJbuejASaIBHWD3snUa3",
+	alias: 'server'
+});
+
 var db = admin.database();
 var database = firebase.database();
-var microgear = MicroGear.create({
-  key : "6xeLdlHHWBuM49O",
-  secret : "tzTRtxJbuejASaIBHWD3snUa3",
-  alias: 'server'
-});
+
 
 module.exports = {
 	notification: () => {
@@ -48,17 +51,15 @@ module.exports = {
 		})
 	},
 	getReview: async function(reviewId) {
-		return await new Promise((resolve,reject)=>{
-			database.ref('post').once('value')
-			.then((s) => {
-				resolve({...s.child(reviewId).val(), ...{'id': reviewId}})
-			})
-			.catch(err => reject(err))
-		})
+		try {
+			const s = await database.ref('post').once('value')
+			return {...s.child(reviewId).val(), ...{'id': reviewId}}
+		}catch(error) {
+			console.error(error.response.status)
+		}
 	},
 	postReview: async (review) => {
 		return await new Promise((resolve, reject) => {
-			const refPost = database.ref('post')
 			const data = {
 				reviewer: {
 					id: review.uId
@@ -75,13 +76,21 @@ module.exports = {
 				},
 				comment:[]
 			}
-			refPost.push(data)
-			resolve('post success')
-		}).catch(err => reject(err))
+			database.ref('post').push(data)
+			getMessage(review.uId)
+				.then((message)=> {
+					microgear.connect('noti')
+					microgear.on('connected', () => {
+						microgear.publish('/message', JSON.stringify(message))
+						microgear.disconnect()
+					})
+					resolve(message)
+				})
+		})
 	},
 	subscribe: async function(subscriber, follower) {
 		return await new Promise((resolve, reject) => {
-			sameSubscribe(subscriber, follower)
+			checkSubscribe(subscriber, follower)
 				.then((data)=> {
 					var regex = "^\\s+$";
 					if(subscriber.match(regex) || follower.match(regex) || subscriber == '' || follower == ''){
@@ -94,19 +103,21 @@ module.exports = {
 						})
 						resolve('success subscriber')
 					}
-				}).catch((err)=>reject(err))
-				
-			
+				})
+				.catch((data)=>reject(data))
 		})
 	}
 }
 
-function checkSubscribe(subscribeId) {
-
-}
-
-function publishToNetpie() {
-
+async function getMessage(reviewerId) {
+	var allFollower = []
+	const s = await database.ref('subscribe').once('value')
+	s.forEach(cs => {
+		if(cs.val().subscriber == reviewerId){
+			allFollower.push(cs.val().follower)
+		}
+	})
+	return allFollower
 }
 
 async function checkSubscribe(subscriber, follower) {

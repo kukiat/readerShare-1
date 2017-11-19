@@ -1,8 +1,6 @@
-
-var admin = require("firebase-admin");
 var firebase = require('firebase')
-var serviceAccount = require("../utils/readershare-1-firebase-adminsdk-vjyk4-83d561f008.json");
 var MicroGear = require('microgear')
+var database = firebase.database();
 
 firebase.initializeApp({
 	apiKey: "AIzaSyCxV1SPVPdDQg539Ir6G0Rn5Y-WgAAgzVs",
@@ -11,20 +9,11 @@ firebase.initializeApp({
   storageBucket: "reader-db.appspot.com"
 })
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://readershare-1.firebaseio.com"
-});
-
 const microgear = MicroGear.create({
 	key : "6xeLdlHHWBuM49O",
 	secret : "tzTRtxJbuejASaIBHWD3snUa3",
 	alias: 'server'
 });
-
-var db = admin.database();
-var database = firebase.database();
-
 
 module.exports = {
 	notification: () => {
@@ -132,5 +121,4 @@ async function checkSubscribe(subscriber, follower) {
 			resolve('can subscribe')
 		})
 	})
-		
 }

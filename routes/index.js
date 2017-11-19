@@ -5,11 +5,6 @@ var router = express.Router();
 var Model = require('../model/model');
 var MicroGear = require('microgear')
 
-const microgear = MicroGear.create({
-	key : "6xeLdlHHWBuM49O",
-	secret : "tzTRtxJbuejASaIBHWD3snUa3",
-	alias: 'server'
-});
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });

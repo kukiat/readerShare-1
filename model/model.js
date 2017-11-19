@@ -1,3 +1,4 @@
+
 var admin = require("firebase-admin");
 var firebase = require('firebase')
 var serviceAccount = require("../utils/readershare-1-firebase-adminsdk-vjyk4-83d561f008.json");
@@ -35,7 +36,7 @@ module.exports = {
 			database.ref('post').once('value')
 			.then((s)=>{
 				const data = []
-				const x = s.forEach((cs)=> {
+				s.forEach((cs)=> {
 					const reviewKey = cs.key
 					const reviewDetail = s.child(reviewKey).val()
 					const review = {...reviewDetail, ...{'id': reviewKey} }
@@ -77,6 +78,48 @@ module.exports = {
 			refPost.push(data)
 			resolve('post success')
 		}).catch(err => reject(err))
+	},
+	subscribe: async function(subscriber, follower) {
+		return await new Promise((resolve, reject) => {
+			sameSubscribe(subscriber, follower)
+				.then((data)=> {
+					var regex = "^\\s+$";
+					if(subscriber.match(regex) || follower.match(regex) || subscriber == '' || follower == ''){
+						reject('subscriber or follower is empty')
+					}
+					else{
+						database.ref('subscribe').push({
+							'subscriber': subscriber,
+							'follower': follower
+						})
+						resolve('success subscriber')
+					}
+				}).catch((err)=>reject(err))
+				
+			
+		})
 	}
 }
 
+function checkSubscribe(subscribeId) {
+
+}
+
+function publishToNetpie() {
+
+}
+
+async function checkSubscribe(subscriber, follower) {
+	return await new Promise((resolve, reject) => {
+		database.ref('subscribe').once('value')
+		.then((s) => {
+			s.forEach(cs => {
+				if(cs.val().subscriber == subscriber && cs.val().follower == follower) {
+					reject('cannot subscribe')
+				}
+			})
+			resolve('can subscribe')
+		})
+	})
+		
+}

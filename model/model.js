@@ -1,7 +1,6 @@
 var firebase = require('firebase')
 var MicroGear = require('microgear')
 
-
 firebase.initializeApp({
 	apiKey: "AIzaSyCxV1SPVPdDQg539Ir6G0Rn5Y-WgAAgzVs",
   authDomain: "reader-db.firebaseapp.com",
@@ -46,7 +45,7 @@ module.exports = {
 			const s = await database.ref('post').once('value')
 			return {...s.child(reviewId).val(), ...{'id': reviewId}}
 		}catch(error) {
-			console.error(error.response.status)
+			console.error(error)
 		}
 	},
 	postReview: async (review) => {

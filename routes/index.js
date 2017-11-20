@@ -9,6 +9,16 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
 
+router.get('/mockFeeds', function(req, res, next) {
+  var feed = require('../utils/feed')
+  res.json(feed.getFeed())
+})
+
+router.get('/mockReview/:reviewId', function(req, res, next) {
+  var getFeed = require('../utils/getFeed')
+  res.json(getFeed.findFeed(req.params.reviewId))
+})
+
 router.get('/feeds', function(req, res, next) {
   Model.getAllReview()
   .then((data)=>res.send(data))
@@ -18,7 +28,7 @@ router.get('/feeds', function(req, res, next) {
 router.get('/review/:reviewId', function(req, res, next) {
   Model.getReview(req.params.reviewId)
   .then(data => res.status(200).send(data))
-  .catch(data => res.status(data))
+  .catch(data => res.send(data))
 })
 
 router.post('/post', function(req, res, next) {
@@ -46,7 +56,7 @@ router.post('/testsubscribe', function(req, res, next) {
 router.post('/subscribe', function(req, res, next) {
   Model.subscribe(req.body.subscriber, req.body.follower)
     .then(data => res.status(200).send(data))
-    .catch(data => res.send(data))
+    .catch(data => res.status(400).send(data))
 })
 module.exports = router;
 

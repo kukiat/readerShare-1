@@ -44,15 +44,6 @@ router.post('/post', function(req, res, next) {
     .catch(data => res.status(400).send(data))
 })
 
-router.post('/comment', function(req, res, next) {
-  res.json()
-})
-
-router.post('/testsubscribe', function(req, res, next) {
-  Model.notification()
-  res.send('ok')
-})
-
 router.post('/subscribe', function(req, res, next) {
   Model.subscribe(req.body.subscriber, req.body.follower)
     .then(data => res.status(200).send(data))

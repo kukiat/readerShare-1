@@ -17,13 +17,6 @@ const microgear = MicroGear.create({
 var database = firebase.database();
 
 module.exports = {
-	notification: () => {
-		microgear.connect('noti')
-		microgear.on('connected', () => {
-			microgear.publish('/message', 'notification from server.')
-			microgear.disconnect()
-		})
-	},
 	getAllReview: async function() {
 		return await new Promise((resolve, reject) =>{
 			database.ref('post').once('value')
@@ -41,12 +34,8 @@ module.exports = {
 		})
 	},
 	getReview: async function(reviewId) {
-		try {
-			const s = await database.ref('post').once('value')
-			return {...s.child(reviewId).val(), ...{'id': reviewId}}
-		}catch(error) {
-			console.error(error)
-		}
+		const s = await database.ref('post').once('value')
+		return {...s.child(reviewId).val(), ...{'id': reviewId}}
 	},
 	postReview: async (review) => {
 		return await new Promise((resolve, reject) => {

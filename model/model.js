@@ -42,7 +42,7 @@ module.exports = {
 			.catch((err) => reject(err))
 		})
 	},
-	getReview: async function(reviewId) {
+	getReviewById: async function(reviewId) {
 		const review = await database.ref('post').once('value')
 		return Object.assign(review.child(reviewId).val(), {'id': reviewId})
 	}

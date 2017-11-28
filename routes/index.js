@@ -30,6 +30,12 @@ router.get('/feeds', function(req, res, next) {
   .catch((err) => res.status(err.code).send(err))
 })
 
+router.get('/review/:reviewId', function(req, res, next) {
+  Model.getReview(req.params.reviewId)
+    .then(data => res.status(200).send(data))
+    .catch(err => res.status(err.code).send(err))
+})
+
 module.exports = router;
 
 

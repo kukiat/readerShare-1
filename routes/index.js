@@ -42,6 +42,17 @@ router.post('/subscribe', function(req, res, next) {
     .catch(err => res.status(400).send(err))
 })
 
+router.post('/post', function(req, res, next) {
+  Model.postReview({
+    uId: req.body.uId, 
+    bookName: req.body.bookName, 
+    reviewTitle: req.body.reviewTitle, 
+    reviewContent: req.body.reviewContent
+  })
+    .then(data => res.status(200).send(data))
+    .catch(err => res.status(400).send(err))
+})
+
 module.exports = router;
 
 

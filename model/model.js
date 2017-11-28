@@ -71,6 +71,36 @@ module.exports = {
 				})
 				.catch((data)=> reject(data))
 		})
+	},
+	postReview: async (review) => {
+		return await new Promise((resolve, reject) => {
+			const data = {
+				reviewer: {
+					id: review.uId
+				},
+				book: {
+					name: review.bookName,
+					image: "url"
+				},
+				review:	{
+					title: review.reviewTitle,
+					content: review.reviewContent,
+					rating: 0,
+					like: 0,
+				},
+				comment:[]
+			}
+			database.ref('post').push(data)
+			getMessage(review.uId)
+				.then((message)=> {
+					microgear.connect('noti')
+					microgear.on('connected', () => {
+						microgear.publish('/message', JSON.stringify(message))
+						microgear.disconnect()
+					})
+					resolve('success')
+				})
+		})
 	}
 }
 
@@ -86,4 +116,15 @@ async function checkSubscribe(subscriber, follower) {
 				resolve('can subscribe')
 			})
 	})
+}
+
+async function getMessage(reviewerId) {
+	var allFollower = []
+	const s = await database.ref('subscribe').once('value')
+	s.forEach(cs => {
+		if(cs.val().subscriber == reviewerId){
+			allFollower.push(cs.val().follower)
+		}
+	})
+	return allFollower
 }

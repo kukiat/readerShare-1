@@ -25,5 +25,21 @@ module.exports = {
 		  microgear.publish('/message','eieieeiieieie.')
 		    microgear.disconnect()
 	  })
-  }
+	},
+	getAllReview: async function() {
+		return await new Promise((resolve, reject) => {
+			database.ref('post').once('value')
+			.then((s) => {
+				const data = []
+				s.forEach((cs) => {
+					const reviewKey = cs.key
+					const reviewDetail = s.child(reviewKey).val()
+					const review = Object.assign(reviewDetail, { 'id': reviewKey })
+					data.push(review)
+				})
+				resolve(data)
+			})
+			.catch((err) => reject(err))
+		})
+	}
 }

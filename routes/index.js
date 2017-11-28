@@ -24,6 +24,12 @@ router.post('/mock/subscribe', function(req, res, next) {
   res.send('ok')
 })
 
+router.get('/feeds', function(req, res, next) {
+  Model.getAllReview()
+  .then((data) => res.status(200).send(data))
+  .catch((err) => res.status(err.code).send(err))
+})
+
 module.exports = router;
 
 

@@ -34,7 +34,7 @@ module.exports = {
 				s.forEach((cs) => {
 					const reviewKey = cs.key
 					const reviewDetail = s.child(reviewKey).val()
-					const review = Object.assign(reviewDetail, { 'id': reviewKey })
+					const review = Object.assign(reviewDetail, { id: reviewKey })
 					data.push(review)
 				})
 				resolve(data)
@@ -43,7 +43,15 @@ module.exports = {
 		})
 	},
 	getReviewById: async function(reviewId) {
-		const review = await database.ref('post').once('value')
-		return Object.assign(review.child(reviewId).val(), {'id': reviewId})
+		return await new Promise((resolve, reject) => {
+			database.ref('post').once('value')
+				.then((review) => {
+					resolve(Object.assign(review.child(reviewId).val(), { id: reviewId }))
+				})
+				.catch(err => {
+					reject('id not found')
+				})
+		})
+		
 	}
 }

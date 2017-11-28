@@ -52,6 +52,38 @@ module.exports = {
 					reject('id not found')
 				})
 		})
-		
+	},
+	subscribe: async function(subscriber, follower) {
+		return await new Promise((resolve, reject) => {
+			checkSubscribe(subscriber, follower)
+				.then((data)=> {
+					var regex = "^\\s+$";
+					if(subscriber.match(regex) || follower.match(regex) || subscriber == '' || follower == ''){
+						reject('subscriber or follower is empty')
+					}
+					else{
+						database.ref('subscribe').push({
+							'subscriber': subscriber,
+							'follower': follower
+						})
+						resolve('success subscriber')
+					}
+				})
+				.catch((data)=> reject(data))
+		})
 	}
+}
+
+async function checkSubscribe(subscriber, follower) {
+	return await new Promise((resolve, reject) => {
+		database.ref('subscribe').once('value')
+			.then((s) => {
+				s.forEach(cs => {
+					if(cs.val().subscriber == subscriber && cs.val().follower == follower) {
+						reject('cannot subscribe')
+					}
+				})
+				resolve('can subscribe')
+			})
+	})
 }

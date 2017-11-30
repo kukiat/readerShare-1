@@ -46,7 +46,11 @@ router.post('/post', function(req, res, next) {
 })
  
 router.post('/comment', function(req, res, next) {
-  Model.comment()
+  Model.comment({
+    uId: req.body.uId,
+    reviewId: req.body.reviewId,
+    reviewContent: req.body.reviewContent
+  })
   res.send('ok')
 })
 module.exports = router;

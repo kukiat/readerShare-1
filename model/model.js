@@ -94,8 +94,11 @@ module.exports = {
 				})
 		})
 	},
-	comment: function() {
-		
+	comment: function(review) {
+		database.ref('post').child(review.reviewId).once('value')
+			.then(s => {
+				console.log(s.val().comment)
+			})
 	}
 }
 

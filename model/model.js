@@ -93,6 +93,9 @@ module.exports = {
 					resolve('success')
 				})
 		})
+	},
+	comment: function() {
+		
 	}
 }
 

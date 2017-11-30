@@ -44,7 +44,11 @@ router.post('/post', function(req, res, next) {
     .then(data => res.status(200).send(data))
     .catch(err => res.status(400).send(err))
 })
-
+ 
+router.post('/comment', function(req, res, next) {
+  Model.comment()
+  res.send('ok')
+})
 module.exports = router;
 
 

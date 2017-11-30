@@ -95,10 +95,12 @@ module.exports = {
 		})
 	},
 	comment: function(review) {
-		database.ref('post').child(review.reviewId).once('value')
-			.then(s => {
-				console.log(s.val().comment)
-			})
+		database.ref('post').child(`/${review.reviewId}/comment`)
+		.push({
+			uId: review.uId,
+			reviewContent: review.reviewContent,
+			reviewId: review.reviewId
+		})
 	}
 }
 

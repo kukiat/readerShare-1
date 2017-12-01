@@ -25,7 +25,7 @@ router.get('/feeds', function(req, res, next) {
 router.get('/review/:reviewId', function(req, res, next) {
   Model.getReviewById(req.params.reviewId)
     .then(data => res.status(200).send(data))
-    .catch(err => res.status(404).send({ message: err } || 'err'))
+    .catch(err => res.status(err.status).send(err.message))
 })
 
 router.post('/subscribe', function(req, res, next) {

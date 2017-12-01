@@ -36,15 +36,12 @@ module.exports = {
 		})
 	},
 	getReviewById: async function(reviewId) {
-		return await new Promise((resolve, reject) => {
-			database.ref('post').once('value')
-				.then((review) => {
-					resolve(Object.assign(review.child(reviewId).val(), { id: reviewId }))
-				})
-				.catch(err => {
-					reject('id not found')
-				})
-		})
+		try {
+			const review = await database.ref('post').once('value')
+			return Object.assign(review.child(reviewId).val(), { id: reviewId })
+		}catch(err) {
+			throw CustomError(404, 'not found')
+		}
 	},
 	subscribe: async function(subscriber, follower) {
 			try {

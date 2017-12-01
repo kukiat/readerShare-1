@@ -55,7 +55,7 @@ router.post('/post', function(req, res, next) {
     .catch(err => res.status(400).send(err))
 })
  
-router.post('/comment', function(req, res, next) {
+router.post('/comment', async function(req, res, next) {
   try {
     await Model.comment({
       uId: req.body.uId,

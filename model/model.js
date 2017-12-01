@@ -47,23 +47,16 @@ module.exports = {
 		})
 	},
 	subscribe: async function(subscriber, follower) {
-		return await new Promise((resolve, reject) => {
-			checkSubscribe(subscriber, follower)
-				.then((data)=> {
-					var regex = "^\\s+$";
-					if(isBlank(subscriber) || isBlank(follower)){
-						reject('subscriber or follower is empty')
-					}
-					else{
-						database.ref('subscribe').push({
-							'subscriber': subscriber,
-							'follower': follower
-						})
-						resolve('success subscriber')
-					}
+			try {
+				await validateSubscribe(subscriber, follower)
+				await checkSubscribe(subscriber, follower)
+				database.ref('subscribe').push({
+					'subscriber': subscriber,
+					'follower': follower
 				})
-				.catch((data)=> reject(data))
-		})
+			} catch(err) {
+				throw err
+			}
 	},
 	postReview: async (review) => {
 		return await new Promise((resolve, reject) => {
@@ -98,7 +91,11 @@ module.exports = {
 	comment: async function(review) {
 		try {
 			await validateComment(review)
-			postComment(review)
+			database.ref('post').child(`/${review.reviewId}/comment`).push({
+				uId: review.uId,
+				reviewContent: review.reviewContent,
+				reviewId: review.reviewId
+			})
 		} catch(err) {
 			throw err
 		}
@@ -111,36 +108,31 @@ function isBlank(str) {
 
 function validateComment(review) {
 	return new Promise((resolve, reject) => {
-		console.log(isBlank(review.reviewContent))
 		if(isBlank(review.uId) || isBlank(review.reviewContent) || isBlank(review.reviewId)) {
 			reject(CustomError(400, 'data is empty'))
 		}
-		resolve(review)
+		resolve()
 	})
 }
 
-function postComment(review) {
+function validateSubscribe(subscriber, follower) {
 	return new Promise((resolve, reject) => {
-		database.ref('post').child(`/${review.reviewId}/comment`).push({
-			uId: review.uId,
-			reviewContent: review.reviewContent,
-			reviewId: review.reviewId
-		})
-		resolve('success')
+		if(isBlank(subscriber) || isBlank(follower)){
+			reject(CustomError(400, 'subscribe or follow empty'))
+		}
+		resolve()
 	})
 }
 
 async function checkSubscribe(subscriber, follower) {
+	const s = await database.ref('subscribe').once('value')
 	return await new Promise((resolve, reject) => {
-		database.ref('subscribe').once('value')
-			.then((s) => {
-				s.forEach(cs => {
-					if(cs.val().subscriber == subscriber && cs.val().follower == follower) {
-						reject('cannot subscribe')
-					}
-				})
-				resolve('can subscribe')
-			})
+		s.forEach(cs => {
+			if(cs.val().subscriber == subscriber && cs.val().follower == follower) {
+				reject(CustomError(400, 'already subscribe'))
+			}
+		})
+		resolve()
 	})
 }
 

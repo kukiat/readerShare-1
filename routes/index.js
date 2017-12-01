@@ -31,7 +31,7 @@ router.get('/review/:reviewId', function(req, res, next) {
 router.post('/subscribe', function(req, res, next) {
   Model.subscribe(req.body.subscriber, req.body.follower)
     .then(data => res.status(200).send(data))
-    .catch(err => res.status(400).send(err))
+    .catch(err => res.status(err.status).send(err.message))
 })
 
 router.post('/post', function(req, res, next) {

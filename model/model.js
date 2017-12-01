@@ -1,6 +1,7 @@
 var admin = require("firebase-admin");
 var MicroGear = require('microgear')
 var firebase = require('firebase')
+var CustomError = require('../utils/error')
 
 firebase.initializeApp({
   apiKey: "AIzaSyCxV1SPVPdDQg539Ir6G0Rn5Y-WgAAgzVs",
@@ -99,6 +100,7 @@ module.exports = {
 			await validateComment(review)
 			postComment(review)
 		} catch(err) {
+			console.log(err)
 			throw err
 		}
 	}
@@ -107,10 +109,7 @@ module.exports = {
 function validateComment(review) {
 	return new Promise((resolve, reject) => {
 		if(review.uId == '' || review.reviewContent == '' || review.reviewId == '') {
-			reject({
-				code: 400,
-				message: 'data is empty'
-			})
+			reject(CustomError(400, 'data is empty'))
 		}
 		resolve(review)
 	})

@@ -52,7 +52,7 @@ router.post('/comment', function(req, res, next) {
     reviewContent: req.body.reviewContent
   })
   .then(data => res.status(200).send(data))
-  .catch(err => res.status(err.code).send(err))
+  .catch(err => res.status(err.status).send(err.message))
 })
 module.exports = router;
 

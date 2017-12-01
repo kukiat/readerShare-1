@@ -94,14 +94,37 @@ module.exports = {
 				})
 		})
 	},
-	comment: function(review) {
-		database.ref('post').child(`/${review.reviewId}/comment`)
-		.push({
+	comment: async function(review) {
+		try {
+			await validateComment(review)
+			postComment(review)
+		} catch(err) {
+			throw err
+		}
+	}
+}
+
+function validateComment(review) {
+	return new Promise((resolve, reject) => {
+		if(review.uId == '' || review.reviewContent == '' || review.reviewId == '') {
+			reject({
+				code: 400,
+				message: 'data is empty'
+			})
+		}
+		resolve(review)
+	})
+}
+
+function postComment(review) {
+	return new Promise((resolve, reject) => {
+		database.ref('post').child(`/${review.reviewId}/comment`).push({
 			uId: review.uId,
 			reviewContent: review.reviewContent,
 			reviewId: review.reviewId
 		})
-	}
+		resolve('success')
+	})
 }
 
 async function checkSubscribe(subscriber, follower) {

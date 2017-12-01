@@ -70,8 +70,13 @@ module.exports = {
 				comment:[]
 			}
 			database.ref('post').push(data)
-			getMessage(review.uId)
-				.then((message)=> {
+			Promise.all([getFollower(review.uId), getLastReviewById(review.uId)])
+				.then(val => {
+					const [allFollow, lastReviewId] = val
+					const message = {
+						allFollow,
+						lastReviewId
+					}
 					microgear.connect('noti')
 					microgear.on('connected', () => {
 						microgear.publish('/message', JSON.stringify(message))
@@ -142,7 +147,7 @@ async function checkSubscribe(subscriber, follower) {
 	})
 }
 
-async function getMessage(reviewerId) {
+async function getFollower(reviewerId) {
 	var allFollower = []
 	const s = await database.ref('subscribe').once('value')
 	s.forEach(cs => {
@@ -151,4 +156,15 @@ async function getMessage(reviewerId) {
 		}
 	})
 	return allFollower
+}
+
+async function getLastReviewById(reviewerId) {
+	const s = await database.ref('post').once('value')
+	let lastKey
+	s.forEach(cs => {
+		if(cs.val().reviewer.id == reviewerId) {
+			lastKey = cs.key
+		}
+	})
+	return lastKey
 }

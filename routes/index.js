@@ -2,8 +2,8 @@ var express = require('express');
 var router = express.Router();
 var Model = require('../model/model');
 
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
+router.get('/xxx', function(req, res, next) {
+  Model.getLastReviewBy('0008')
 });
 
 router.get('/mock/feeds', function(req, res, next) {

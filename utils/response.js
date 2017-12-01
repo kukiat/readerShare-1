@@ -1,20 +1,26 @@
-module.exports = function respondError(err) {
-  return function(res) {
-    res.status(err.status).send(err.message)
+function respondError(res) {
+  return function(err) {
+    res.status(err.status).send(err)
   }
 }
 
-module.exports = function respondSuccess() {
-  return function(res) {
+function respondSuccess(res) {
+  return function() {
     res.status(200).send({message: 'success'})
   }
 }
 
-module.exports = function respondResult(data) {
-  return function(res) {
+function respondResult(res) {
+  return function(result) {
     res.status(200).send({
       message: 'success',
-      result: data
+      result
     })  
   }
+}
+
+module.exports = {
+  respondResult,
+  respondError,
+  respondSuccess
 }

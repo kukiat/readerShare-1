@@ -1,9 +1,10 @@
 var express = require('express');
 var router = express.Router();
 var Model = require('../model/model');
+var r = require('../utils/response')
 
-router.get('/xxx', function(req, res, next) {
-  Model.getLastReviewBy('0008')
+router.get('/', function(req, res, next) {
+  res.render('index', { title: 'Express' });
 });
 
 router.get('/mock/feeds', function(req, res, next) {
@@ -16,22 +17,31 @@ router.get('/mock/review/:id', function(req, res, next) {
   res.json(getFeed.findFeed(req.params.id))
 })
 
-router.get('/feeds', function(req, res, next) {
-  Model.getAllReview()
-  .then((data) => res.status(200).send(data))
-  .catch((err) => res.status(err.code).send(err))
+router.get('/feeds', async function(req, res, next) {
+  try {
+    const result = await Model.getAllReview()
+    r.respondResult(res)(result)
+  }catch(err) {
+    r.respondError(res)(err)
+  }
 })
 
-router.get('/review/:reviewId', function(req, res, next) {
-  Model.getReviewById(req.params.reviewId)
-    .then(data => res.status(200).send(data))
-    .catch(err => res.status(err.status).send(err.message))
+router.get('/review/:reviewId', async function(req, res, next) {
+  try {
+    const result = await Model.getReviewById(req.params.reviewId)
+    r.respondResult(res)(result)
+  } catch(err) {
+    r.respondError(res)(err)
+  }
 })
 
-router.post('/subscribe', function(req, res, next) {
-  Model.subscribe(req.body.subscriber, req.body.follower)
-    .then(data => res.status(200).send(data))
-    .catch(err => res.status(err.status).send(err.message))
+router.post('/subscribe', async function(req, res, next) {
+  try {
+    await Model.subscribe(req.body.subscriber, req.body.follower)
+    r.respondSuccess(res)()
+  } catch(err) {
+    r.respondError(res)(err)
+  }
 })
 
 router.post('/post', function(req, res, next) {
@@ -46,13 +56,16 @@ router.post('/post', function(req, res, next) {
 })
  
 router.post('/comment', function(req, res, next) {
-  Model.comment({
-    uId: req.body.uId,
-    reviewId: req.body.reviewId,
-    reviewContent: req.body.reviewContent
-  })
-  .then(data => res.status(200).send(data))
-  .catch(err => res.status(err.status).send(err.message))
+  try {
+    await Model.comment({
+      uId: req.body.uId,
+      reviewId: req.body.reviewId,
+      reviewContent: req.body.reviewContent
+    })
+    r.respondSuccess(res)()
+  } catch(err) {
+    r.respondError(res)(err)
+  }
 })
 module.exports = router;
 

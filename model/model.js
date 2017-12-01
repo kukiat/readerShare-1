@@ -51,7 +51,7 @@ module.exports = {
 			checkSubscribe(subscriber, follower)
 				.then((data)=> {
 					var regex = "^\\s+$";
-					if(subscriber.match(regex) || follower.match(regex) || subscriber == '' || follower == ''){
+					if(isBlank(subscriber) || isBlank(follower)){
 						reject('subscriber or follower is empty')
 					}
 					else{

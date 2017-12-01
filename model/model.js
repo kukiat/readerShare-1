@@ -32,10 +32,11 @@ module.exports = {
 	},
 	getReviewById: async function(reviewId) {
 		try {
+			await hasReviewId(reviewId)
 			const review = await database.ref('post').once('value')
 			return Object.assign(review.child(reviewId).val(), { id: reviewId })
 		}catch(err) {
-			throw CustomError(404, 'not found')
+			throw err
 		}
 	},
 	subscribe: async function(subscriber, follower) {
@@ -82,6 +83,7 @@ module.exports = {
 	},
 	comment: async function(review) {
 		try {
+			await hasReviewId(review.reviewId)
 			await validateComment(review)
 			database.ref('post').child(`/${review.reviewId}/comment`).push({
 				uId: review.uId,
@@ -96,6 +98,18 @@ module.exports = {
 
 function isBlank(str) {
 	return (!str || 0 === str.length || /^\s*$/.test(str));
+}
+
+async function hasReviewId(reviewId) {
+	const s = await database.ref('post').once('value')
+	return await new Promise((resolve, reject) => {
+		s.forEach(cs => {
+			if(cs.key == reviewId) {
+				resolve()
+			}
+		})
+		reject(CustomError(404, 'reviewId not found'))
+	})
 }
 
 function validateComment(review) {

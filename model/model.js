@@ -100,15 +100,19 @@ module.exports = {
 			await validateComment(review)
 			postComment(review)
 		} catch(err) {
-			console.log(err)
 			throw err
 		}
 	}
 }
 
+function isBlank(str) {
+	return (!str || 0 === str.length || /^\s*$/.test(str));
+}
+
 function validateComment(review) {
 	return new Promise((resolve, reject) => {
-		if(review.uId == '' || review.reviewContent == '' || review.reviewId == '') {
+		console.log(isBlank(review.reviewContent))
+		if(isBlank(review.uId) || isBlank(review.reviewContent) || isBlank(review.reviewId)) {
 			reject(CustomError(400, 'data is empty'))
 		}
 		resolve(review)

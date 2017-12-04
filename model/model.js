@@ -5,9 +5,9 @@ var MicroGear = require('microgear')
 var CustomError = require('../utils/error')
 
 var microgear = MicroGear.create({
-  key : "6xeLdlHHWBuM49O",
-  secret : "tzTRtxJbuejASaIBHWD3snUa3",
-  alias: 'server'
+	key : "a4OavAaNmJ2HUUZ",
+	secret : "KnE8YvodLiWpBCtMvE9fmrFaD",
+	alias: 'server'
 });
 
 firebase.initializeApp({
@@ -71,19 +71,19 @@ module.exports = {
 				comment:[]
 			}
 			database.ref('post').push(data)
-			Promise.all([getFollower(review.uId), getLastReviewById(review.uId)])
-				.then(val => {
-					const [allFollow, lastReviewId] = val
-					const message = {
-						allFollow,
-						lastReviewId
-					}
-					microgear.connect('noti')
-					microgear.on('connected', () => {
-						microgear.publish('/message', JSON.stringify(message))
-						microgear.disconnect()
+			
+			getFollower(review.uId)
+				.then(message => {
+					microgear.connect('noti', () => {
+						microgear.on('connected', () => {
+							microgear.publish('/message', JSON.stringify(message))
+						})
 					})
+					setTimeout(() => {
+						microgear.disconnect()
+					}, 1000);
 					resolve('success')
+					
 				})
 		})
 	},
@@ -149,14 +149,22 @@ async function checkSubscribe(subscriber, follower) {
 }
 
 async function getFollower(reviewerId) {
-	var allFollower = []
+	let allFollower = []
 	const s = await database.ref('subscribe').once('value')
 	s.forEach(cs => {
 		if(cs.val().subscriber == reviewerId){
 			allFollower.push(cs.val().follower)
 		}
 	})
-	return allFollower
+
+	const ss = await database.ref('post').once('value')
+	let lastKey
+	ss.forEach(cs => {
+		if(cs.val().reviewer.id == reviewerId) {
+			lastKey = cs.key
+		}
+	})
+	return {allFollower,lastKey}
 }
 
 async function getLastReviewById(reviewerId) {

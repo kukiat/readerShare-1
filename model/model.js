@@ -59,9 +59,9 @@ module.exports = {
 			try {
 				await validateSubscribe(subscriber, follower)
 				await checkSubscribe(subscriber, follower)
-				database.ref('subscribe').push({
-					'subscriber': subscriber,
-					'follower': follower
+				database.ref('subscribe').push({ 
+					subscriber, 
+					follower 
 				})
 			} catch(err) {
 				throw err
@@ -86,7 +86,6 @@ module.exports = {
 				comment:[]
 			}
 			database.ref('post').push(data)
-			
 			getMessage(review.uId)
 				.then(message => {
 					microgear.connect('noti', () => {
@@ -98,7 +97,6 @@ module.exports = {
 						microgear.disconnect()
 					}, 1500);
 					resolve('success')
-					
 				})
 		})
 	},
@@ -179,5 +177,8 @@ async function getMessage(reviewerId) {
 			lastKey = cs.key
 		}
 	})
-	return {allFollower,lastKey}
+	return { 
+		allFollower,
+		lastKey 
+	}
 }

@@ -34,8 +34,19 @@ module.exports = {
 	getReviewById: async function(reviewId) {
 		try {
 			await hasReviewId(reviewId)
-			const review = await database.ref('post').once('value')
-			return Object.assign(review.child(reviewId).val(), { id: reviewId })
+			const review = await database.ref('post').child(reviewId).once('value')
+			const comment = []
+			review.child('comment').forEach(cs=>{
+				comment.push(Object.assign({}, {id: cs.key}, cs.val()))
+			})
+			const reviewDetail = {
+				id: review.key,
+				book: review.val().book,
+				reviewer: review.val().reviewer,				
+				review: review.val().review,
+				comment
+			}
+			return reviewDetail
 		}catch(err) {
 			throw err
 		}

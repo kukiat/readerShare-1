@@ -1,7 +1,7 @@
 var express = require('express');
 
 var router = express.Router();
-var Model = require('../model/model');
+var Model = require('../model');
 var r = require('../utils/response')
 
 router.get('/', function(req, res, next) {
@@ -68,6 +68,7 @@ router.post('/comment', async function(req, res, next) {
     r.respondError(res)(err)
   }
 })
+
 module.exports = router;
 
 

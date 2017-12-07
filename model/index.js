@@ -1,23 +1,7 @@
-var admin = require("firebase-admin");
-var firebase = require('firebase')
-var MicroGear = require('microgear')
-
 var CustomError = require('../utils/error')
-
-var microgear = MicroGear.create({
-	key : "a4OavAaNmJ2HUUZ",
-	secret : "KnE8YvodLiWpBCtMvE9fmrFaD",
-	alias: 'server'
-});
-
-firebase.initializeApp({
-  apiKey: "AIzaSyCxV1SPVPdDQg539Ir6G0Rn5Y-WgAAgzVs",
-  authDomain: "reader-db.firebaseapp.com",
-  databaseURL: "https://reader-db.firebaseio.com",
-  storageBucket: "reader-db.appspot.com"
-})
-
-var database = firebase.database();
+var config = require('./config')
+var database = config.firebase
+var microgear = config.microgear
 
 module.exports = {
 	getAllReview: async function() {

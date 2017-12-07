@@ -106,7 +106,7 @@ module.exports = {
 			await validateComment(review)
 			database.ref('post').child(`/${review.reviewId}/comment`).push({
 				uId: review.uId,
-				reviewContent: review.reviewContent,
+				commentContent: review.commentContent,
 				reviewId: review.reviewId
 			})
 		} catch(err) {
@@ -133,7 +133,7 @@ async function hasReviewId(reviewId) {
 
 function validateComment(review) {
 	return new Promise((resolve, reject) => {
-		if(isBlank(review.uId) || isBlank(review.reviewContent) || isBlank(review.reviewId)) {
+		if(isBlank(review.uId) || isBlank(review.commentContent) || isBlank(review.reviewId)) {
 			reject(CustomError(400, 'data is empty'))
 		}
 		resolve()

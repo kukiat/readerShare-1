@@ -61,7 +61,7 @@ router.post('/comment', async function(req, res, next) {
     await Model.comment({
       uId: req.body.uId,
       reviewId: req.body.reviewId,
-      reviewContent: req.body.reviewContent
+      commentContent: req.body.commentContent
     })
     r.respondSuccess(res)()
   } catch(err) {

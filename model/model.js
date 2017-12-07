@@ -25,8 +25,12 @@ module.exports = {
 		const data = []
 		s.forEach((cs) => {
 			const reviewKey = cs.key
-			const reviewDetail = s.child(reviewKey).val()
-			const review = Object.assign(reviewDetail, { id: reviewKey })
+			const review = {
+				id: reviewKey,
+				book: s.child(reviewKey).val().book,
+				reviewer: s.child(reviewKey).val().reviewer,
+				review: s.child(reviewKey).val().review
+			}
 			data.push(review)
 		})
 		return data

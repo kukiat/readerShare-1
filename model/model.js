@@ -72,7 +72,7 @@ module.exports = {
 			}
 			database.ref('post').push(data)
 			
-			getFollower(review.uId)
+			getMessage(review.uId)
 				.then(message => {
 					microgear.connect('noti', () => {
 						microgear.on('connected', () => {
@@ -81,7 +81,7 @@ module.exports = {
 					})
 					setTimeout(() => {
 						microgear.disconnect()
-					}, 1000);
+					}, 1500);
 					resolve('success')
 					
 				})
@@ -148,7 +148,7 @@ async function checkSubscribe(subscriber, follower) {
 	})
 }
 
-async function getFollower(reviewerId) {
+async function getMessage(reviewerId) {
 	let allFollower = []
 	const s = await database.ref('subscribe').once('value')
 	s.forEach(cs => {
@@ -165,15 +165,4 @@ async function getFollower(reviewerId) {
 		}
 	})
 	return {allFollower,lastKey}
-}
-
-async function getLastReviewById(reviewerId) {
-	const s = await database.ref('post').once('value')
-	let lastKey
-	s.forEach(cs => {
-		if(cs.val().reviewer.id == reviewerId) {
-			lastKey = cs.key
-		}
-	})
-	return lastKey
 }

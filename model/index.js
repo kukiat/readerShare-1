@@ -8,13 +8,12 @@ module.exports = {
 		const s = await database.ref('post').limitToLast(5).once('value')
 		const data = []
 		s.forEach((cs) => {
-			const reviewKey = cs.key
 			const review = {
-				id: reviewKey,
-				book: s.child(reviewKey).val().book,
-				reviewer: s.child(reviewKey).val().reviewer,
-				review: s.child(reviewKey).val().review,
-				createdAt: s.child(reviewKey).val().createdAt,
+				id: cs.key,
+				book: cs.val().book,
+				reviewer: cs.val().reviewer,
+				review: cs.val().review,
+				createdAt: cs.val().createdAt
 			}
 			data.push(review)
 		})
@@ -55,6 +54,7 @@ module.exports = {
 	},
 	postReview: async (review) => {
 		return await new Promise((resolve, reject) => {
+			const now = new Date();
 			const data = {
 				reviewer: {
 					id: review.uId
@@ -69,7 +69,7 @@ module.exports = {
 					rating: 0,
 					like: 0,
 				},
-				createdAt: Date.now(),			
+				createdAt: Date.parse(now),			
 				comment:[]
 			}
 			database.ref('post').push(data)

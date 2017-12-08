@@ -99,6 +99,13 @@ module.exports = {
 		} catch(err) {
 			throw err
 		}
+	},
+	like: async function() {
+		try {
+			return "ok"
+		}catch(err) {
+
+		}
 	}
 }
 

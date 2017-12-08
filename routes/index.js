@@ -69,6 +69,18 @@ router.post('/comment', async function(req, res, next) {
   }
 })
 
+router.post('/like', async function(req, res, next) {
+  try {
+    await Model.like({
+      uId: req.body.uId,
+      reviewId: req.body.reviewId
+    })
+    r.respondSuccess(res)()
+  } catch(err) {
+    r.respondError(res)(err)
+  }
+})
+
 module.exports = router;
 
 

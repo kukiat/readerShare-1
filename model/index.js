@@ -53,39 +53,37 @@ module.exports = {
 			}
 	},
 	postReview: async (review) => {
-		return await new Promise((resolve, reject) => {
-			const now = new Date();
-			const data = {
-				reviewer: {
-					id: review.uId
-				},
-				book: {
-					name: review.bookName,
-					image: "url"
-				},
-				review:	{
-					title: review.reviewTitle,
-					content: review.reviewContent,
-					rating: 10,
-					like: 0,
-				},
-				createdAt: Date.parse(now),			
-				comment:[]
-			}
-			database.ref('post').push(data)
-			getMessage(review.uId)
-				.then(message => {
-					microgear.connect('noti', () => {
-						microgear.on('connected', () => {
-							microgear.publish('/message', JSON.stringify(message))
-						})
+		const now = new Date();
+		const data = {
+			reviewer: {
+				id: review.uId
+			},
+			book: {
+				name: review.bookName,
+				image: "url"
+			},
+			review:	{
+				title: review.reviewTitle,
+				content: review.reviewContent,
+				rating: 10,
+				like: 0,
+			},
+			createdAt: Date.parse(now),			
+			comment:[]
+		}
+		await database.ref('post').push(data)
+		getMessage(review.uId)
+			.then(message => {
+				microgear.connect('noti', () => {
+					microgear.on('connected', () => {
+						microgear.publish('/message', JSON.stringify(message))
 					})
-					setTimeout(() => {
-						microgear.disconnect()
-					}, 1500);
-					resolve('success')
 				})
-		})
+				setTimeout(() => {
+					microgear.disconnect()
+				}, 1500);
+				return Promise.resolve('success')
+			})
 	},
 	comment: async function(review) {
 		try {

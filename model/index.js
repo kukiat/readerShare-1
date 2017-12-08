@@ -66,7 +66,7 @@ module.exports = {
 				review:	{
 					title: review.reviewTitle,
 					content: review.reviewContent,
-					rating: 0,
+					rating: 10,
 					like: 0,
 				},
 				createdAt: Date.parse(now),			

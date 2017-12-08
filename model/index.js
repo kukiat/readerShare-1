@@ -13,7 +13,8 @@ module.exports = {
 				id: reviewKey,
 				book: s.child(reviewKey).val().book,
 				reviewer: s.child(reviewKey).val().reviewer,
-				review: s.child(reviewKey).val().review
+				review: s.child(reviewKey).val().review,
+				createdAt: review.val().createdAt,
 			}
 			data.push(review)
 		})
@@ -32,6 +33,7 @@ module.exports = {
 				book: review.val().book,
 				reviewer: review.val().reviewer,				
 				review: review.val().review,
+				createdAt: review.val().createdAt,
 				comment
 			}
 			return reviewDetail
@@ -67,6 +69,7 @@ module.exports = {
 					rating: 0,
 					like: 0,
 				},
+				createdAt: Date.now(),			
 				comment:[]
 			}
 			database.ref('post').push(data)

@@ -5,7 +5,7 @@ var microgear = config.microgear
 
 module.exports = {
 	getAllReview: async function() {
-		const s = await database.ref('post').once('value')
+		const s = await database.ref('post').limitToLast(5).once('value')
 		const data = []
 		s.forEach((cs) => {
 			const reviewKey = cs.key
@@ -14,7 +14,7 @@ module.exports = {
 				book: s.child(reviewKey).val().book,
 				reviewer: s.child(reviewKey).val().reviewer,
 				review: s.child(reviewKey).val().review,
-				createdAt: review.val().createdAt,
+				createdAt: s.child(reviewKey).val().createdAt,
 			}
 			data.push(review)
 		})

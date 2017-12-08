@@ -69,6 +69,15 @@ router.post('/comment', async function(req, res, next) {
   }
 })
 
+router.post('/postBookmark', async function(req, res, next) {
+  try {
+    await Model.postBookmark()
+    r.send('ok')
+  } catch(err) {
+    
+  }
+})
+
 router.post('/like', async function(req, res, next) {
   try {
     await Model.like(req.body.uId, req.body.reviewId)

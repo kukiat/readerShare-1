@@ -109,6 +109,9 @@ module.exports = {
 		}catch(err) {
 			throw err
 		}
+	},
+	postBookmark: function() {
+		return 'success'
 	}
 }
 

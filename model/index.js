@@ -100,11 +100,14 @@ module.exports = {
 			throw err
 		}
 	},
-	like: async function() {
+	like: async function(uId, reviewId) {
 		try {
-			return "ok"
+			const like = await database.ref('post').child(reviewId).once('value')
+			const updated = like.val().review.like + 1
+			await database.ref('post').child(`/${reviewId}/review`).update({like: updated})
+			return Promise.resolve()
 		}catch(err) {
-
+			throw err
 		}
 	}
 }

@@ -110,9 +110,30 @@ module.exports = {
 			throw err
 		}
 	},
-	postBookmark: function() {
-		return 'success'
+	postBookmark: async function(uId, reviewId) {
+		try {
+			await checkBookmark(uId, reviewId)
+			database.ref('bookmark').push({ uId, reviewId })
+			return Promise.resolve()
+		}catch(err) {
+			throw err
+		}
 	}
+}
+
+async function checkBookmark(uId, reviewId) {
+	const bookmark = await database.ref('bookmark').once('value')
+	return new Promise((resolve, reject)=>{
+		bookmark.forEach(s => {	
+			if(s.val().uId == uId && s.val().reviewId == reviewId) {
+				reject(CustomError(400, 'already bookmark'))
+			}
+			if(isBlank(uId) || isBlank(reviewId)) {
+				reject(CustomError(400, 'reviewId or uId empty'))
+			}			
+			resolve('ok')
+		})
+	})
 }
 
 function isBlank(str) {

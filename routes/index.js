@@ -71,10 +71,10 @@ router.post('/comment', async function(req, res, next) {
 
 router.post('/postBookmark', async function(req, res, next) {
   try {
-    await Model.postBookmark()
-    r.send('ok')
+    await Model.postBookmark(req.body.uId, req.body.reviewId)
+    r.respondSuccess(res)()
   } catch(err) {
-    
+    r.respondError(res)(err)
   }
 })
 

@@ -5,7 +5,7 @@ var microgear = config.microgear
 
 module.exports = {
 	getAllReview: async function() {
-		const s = await database.ref('post').limitToLast(5).once('value')
+		const s = await database.ref('post').limitToFirst(5).once('value')
 		const data = []
 		s.forEach((cs) => {
 			const review = {

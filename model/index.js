@@ -137,8 +137,8 @@ async function checkBookmark(uId, reviewId) {
 			if(isBlank(uId) || isBlank(reviewId)) {
 				reject(CustomError(400, 'reviewId or uId empty'))
 			}			
-			resolve('ok')
 		})
+		resolve()		
 	})
 }
 

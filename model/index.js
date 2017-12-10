@@ -126,32 +126,43 @@ module.exports = {
 		}
 	},
 	getProfile: async function(uId){
-		return await new Promise((resolve, reject)=>{
-		});
+		return await new Promise((resolve,reject)=>{
+			Promise.all([getUserProfile(uId),getUserBookmark(uId),getUserPosts(uId),getUserSubscribe(uId),getUserFollower(uId)])
+			.then((data)=>{
+				resolve(data)
+			})
+		})
 	}
 }
 
-async function getUserProfile(){
+async function getUserProfile(uId){
 	return await new Promise((resolve,reject)=>{
 		user = admin.auth().getUser(uId)
 		resolve(user)
 	})
 }
-async function getUserProfile(){
+async function getUserBookmark(uId){
 	return await new Promise((resolve,reject)=>{
 		database.ref('bookmark').orderByChild('uId').equalTo(uId).on('value', function(snapshot) {
 			resolve(snapshot)
 		});
 	})
 }
-async function getUserProfile(){
+async function getUserPosts(uId){
 	return await new Promise((resolve,reject)=>{
 		database.ref('post').orderByChild('reviewer/id').equalTo(uId).on('value', function(snapshot) {
 			resolve(snapshot)
 		});
 	})
 }
-async function getUserProfile(){
+async function getUserSubscribe(uId){
+	return await new Promise((resolve,reject)=>{
+		database.ref('subscribe').orderByChild('subscriber').equalTo(uId).on('value', function(snapshot) {
+			resolve(snapshot)
+		});
+	})
+}
+async function getUserFollower(uId){
 	return await new Promise((resolve,reject)=>{
 		database.ref('subscribe').orderByChild('follower').equalTo(uId).on('value', function(snapshot) {
 			resolve(snapshot)

@@ -158,7 +158,7 @@ async function getUserBookmark(uId){
 	return await new Promise((resolve,reject)=>{
 		database.ref('bookmark').orderByChild('uId').equalTo(uId).on('value', function(snapshot) {
 			let bookmarks = []
-			if(snapshot.value == undefined)
+			if(snapshot.exists() == false)
 				resolve([])
 			snapshot.forEach( data => {
 				const uId = data.val().uId

@@ -127,12 +127,13 @@ module.exports = {
 	},
 	getProfile: async function(uId){
 		return await new Promise((resolve,reject)=>{
-			Promise.all([getUserProfile(uId),getUserBookmark(uId),getUserPosts(uId)])
+			Promise.all([getUserProfile(uId),getUserBookmark(uId),getUserPosts(uId),getUserSubscribe(uId)])
 			.then((data)=>{
 				const userProfile = {
 					profile: data[0],
 					bookmark: data[1],
-					posts: data[2]
+					posts: data[2],
+					subscribe: data[3]
 				}
 				resolve(userProfile)
 			})
@@ -185,6 +186,18 @@ async function getUserPosts(uId){
 		});
 	})
 }
+async function getUserSubscribe(uId){
+	return await new Promise((resolve,reject)=>{
+		database.ref('subscribe').orderByChild('subscriber').equalTo(uId).on('value', function(snapshot) {
+			let subscribeses = []
+			snapshot.forEach( data => {
+				subscribeses.push(data.val())
+			})
+			resolve(subscribeses)
+		});
+	})
+}
+
 
 async function checkBookmark(uId, reviewId) {
 	const bookmark = await database.ref('bookmark').once('value')

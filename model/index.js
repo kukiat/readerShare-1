@@ -154,7 +154,16 @@ async function getUserProfile(uId){
 async function getUserBookmark(uId){
 	return await new Promise((resolve,reject)=>{
 		database.ref('bookmark').orderByChild('uId').equalTo(uId).on('value', function(snapshot) {
-			resolve(snapshot)
+			let bookmarks = []
+			snapshot.forEach( data => {
+				const book = {
+					id : data.key,
+					reviewId: data.val().reviewId,
+					uId : data.val().uId
+				}
+				bookmarks.push(book)
+			})
+			resolve(bookmarks)
 		});
 	})
 }

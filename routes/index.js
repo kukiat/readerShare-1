@@ -39,7 +39,7 @@ router.get('/review/:reviewId', async function(req, res, next) {
 router.get('/getprofile/:uid', async function(req, res, next) {
     const uId = req.params.uid
     Model.getProfile(uId).then((data)=>{
-      res.send(data);
+      res.json(data);
     }).catch(()=>{res.send('error')})
 });
 

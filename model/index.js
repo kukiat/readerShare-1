@@ -129,7 +129,14 @@ module.exports = {
 		return await new Promise((resolve,reject)=>{
 			Promise.all([getUserProfile(uId),getUserBookmark(uId),getUserPosts(uId),getUserSubscribe(uId),getUserFollower(uId)])
 			.then((data)=>{
-				resolve(data)
+				const userProfile = {
+					profile: data[0],
+					bookmark: data[1],
+					posts: data[2],
+					subscribe: data[3],
+					follower: data[4]
+				}
+				resolve(userProfile)
 			})
 		})
 	}
@@ -137,8 +144,9 @@ module.exports = {
 
 async function getUserProfile(uId){
 	return await new Promise((resolve,reject)=>{
-		user = admin.auth().getUser(uId)
-		resolve(user)
+		admin.auth().getUser(uId).then((userRecord)=>{
+			resolve(userRecord)
+		})
 	})
 }
 async function getUserBookmark(uId){

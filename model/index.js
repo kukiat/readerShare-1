@@ -144,9 +144,12 @@ module.exports = {
 async function getUserProfile(uId){
 	return await new Promise((resolve,reject)=>{
 		admin.auth().getUser(uId).then((userRecord)=>{
+			console.log(userRecord)
 			profile = {
 				uId: userRecord.uid,
-				email: userRecord.email
+				email: userRecord.email,
+				displayName: userRecord.displayName || '',
+				photoURL: userRecord.photoURL || ''
 			}
 			resolve(profile)
 		})

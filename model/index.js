@@ -127,14 +127,12 @@ module.exports = {
 	},
 	getProfile: async function(uId){
 		return await new Promise((resolve,reject)=>{
-			Promise.all([getUserProfile(uId),getUserBookmark(uId),getUserPosts(uId),getUserSubscribe(uId),getUserFollower(uId)])
+			Promise.all([getUserProfile(uId),getUserBookmark(uId),getUserPosts(uId)])
 			.then((data)=>{
 				const userProfile = {
 					profile: data[0],
 					bookmark: data[1],
-					posts: data[2],
-					subscribe: data[3],
-					follower: data[4]
+					posts: data[2]
 				}
 				resolve(userProfile)
 			})
@@ -163,20 +161,6 @@ async function getUserBookmark(uId){
 async function getUserPosts(uId){
 	return await new Promise((resolve,reject)=>{
 		database.ref('post').orderByChild('reviewer/id').equalTo(uId).on('value', function(snapshot) {
-			resolve(snapshot)
-		});
-	})
-}
-async function getUserSubscribe(uId){
-	return await new Promise((resolve,reject)=>{
-		database.ref('subscribe').orderByChild('subscriber').equalTo(uId).on('value', function(snapshot) {
-			resolve(snapshot)
-		});
-	})
-}
-async function getUserFollower(uId){
-	return await new Promise((resolve,reject)=>{
-		database.ref('subscribe').orderByChild('follower').equalTo(uId).on('value', function(snapshot) {
 			resolve(snapshot)
 		});
 	})

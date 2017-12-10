@@ -124,6 +124,23 @@ module.exports = {
 		}catch(err) {
 			throw err
 		}
+	},
+	getProfile: async function(uId){
+		return await new Promise((resolve, reject)=>{
+			user = admin.auth().getUser(uId)
+			database.ref('bookmark').orderByChild('uId').equalTo(uId).on('value', function(snapshot) {
+				console.log(snapshot);
+				resolve(snapshot)
+			});
+			database.ref('post').orderByChild('reviewer/id').equalTo(uId).on('value', function(snapshot) {
+				console.log(snapshot);
+				resolve(snapshot)
+			});
+			database.ref('subscribe').orderByChild('follower').equalTo(uId).on('value', function(snapshot) {
+				console.log(snapshot);
+				resolve(snapshot)
+			});
+		});
 	}
 }
 

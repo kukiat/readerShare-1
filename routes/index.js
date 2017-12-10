@@ -36,6 +36,13 @@ router.get('/review/:reviewId', async function(req, res, next) {
   }
 })
 
+router.get('/getprofile/:uid', async function(req, res, next) {
+    const uId = req.params.uid
+    Model.getProfile(uId).then((data)=>{
+      res.send(data);
+    }).catch(()=>{res.send('error')})
+});
+
 router.post('/subscribe', async function(req, res, next) {
   try {
     await Model.subscribe(req.body.subscriber, req.body.follower)

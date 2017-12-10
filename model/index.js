@@ -201,7 +201,7 @@ async function getUserPosts(uId){
 }
 async function getUserSubscribe(uId){
 	return await new Promise((resolve,reject)=>{
-		database.ref('subscribe').orderByChild('subscriber').equalTo(uId).on('value', function(snapshot) {
+		database.ref('subscribe').orderByChild('follower').equalTo(uId).on('value', function(snapshot) {
 			let subscribeses = []
 			snapshot.forEach( data => {
 				subscribeses.push(data.val())

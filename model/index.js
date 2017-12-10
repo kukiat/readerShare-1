@@ -297,11 +297,7 @@ async function getMessage(reviewerId) {
 
 async function getUserById(id) {
 	try {
-		const user = await admin.auth().getUser(id)
-		return {
-			id: user.uid,
-			email: user.email
-		}
+		return getUserProfile(id).then(user => user)	
 	}catch(err) {
 		return Promise.reject(CustomError(400, 'uId not found'))
 	}

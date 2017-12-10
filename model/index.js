@@ -170,7 +170,18 @@ async function getUserBookmark(uId){
 async function getUserPosts(uId){
 	return await new Promise((resolve,reject)=>{
 		database.ref('post').orderByChild('reviewer/id').equalTo(uId).on('value', function(snapshot) {
-			resolve(snapshot)
+			let posts = []
+			snapshot.forEach( data => {
+				const id = {
+					id: data.key
+				}
+				try{
+					const post = Object.assign(id, data.val());
+					posts.push(post)
+				}
+				catch(e){}
+			})
+			resolve(posts)
 		});
 	})
 }

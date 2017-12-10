@@ -157,15 +157,20 @@ async function getUserBookmark(uId){
 		database.ref('bookmark').orderByChild('uId').equalTo(uId).on('value', function(snapshot) {
 			let bookmarks = []
 			snapshot.forEach( data => {
-				let book = {
-					id : data.key,
-					reviewId: data.val().reviewId,
-					uId : data.val().uId,
-				}
-				getUserProfile(data.val().uId).then(data => {
-					book.email = data.email 
+				const uId = data.val().uId
+				Promise.all([getUserProfile(uId),getUserPosts(uId)]).then(result => {
+					let book = {
+						id : data.key,
+						reviewId: data.val().reviewId,
+						uId : uId,
+					}
+					book.email = result[0].email
+					book.review = []
+					for(i in result[1]){
+						book.reviewTopic.push(result[1][i].review)
+					}
+					bookmarks.push(book)
 				})
-				bookmarks.push(book)
 			})
 			resolve(bookmarks)
 		});

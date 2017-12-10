@@ -167,13 +167,14 @@ async function getUserBookmark(uId){
 					book.email = result[0].email
 					book.review = []
 					for(i in result[1]){
-						book.reviewTopic.push(result[1][i].review)
+						book.review.push(result[1][i].review)
 					}
 					bookmarks.push(book)
+					if(bookmarks.length == Object.keys(snapshot.val()).length)
+						resolve(bookmarks)
 				})
 			})
-			resolve(bookmarks)
-		});
+		})
 	})
 }
 async function getUserPosts(uId){

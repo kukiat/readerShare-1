@@ -157,11 +157,14 @@ async function getUserBookmark(uId){
 		database.ref('bookmark').orderByChild('uId').equalTo(uId).on('value', function(snapshot) {
 			let bookmarks = []
 			snapshot.forEach( data => {
-				const book = {
+				let book = {
 					id : data.key,
 					reviewId: data.val().reviewId,
-					uId : data.val().uId
+					uId : data.val().uId,
 				}
+				getUserProfile(data.val().uId).then(data => {
+					book.email = data.email 
+				})
 				bookmarks.push(book)
 			})
 			resolve(bookmarks)

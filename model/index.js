@@ -3,8 +3,9 @@ var config = require('./config')
 var database = config.firebase
 var microgear = config.microgear
 
-var admin = require('firebase-admin')
 var serviceAccount = require("../utils/key.json");
+var admin = require('firebase-admin')
+
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
   databaseURL: "https://readershare-103ec.firebaseio.com"
@@ -23,7 +24,7 @@ module.exports = {
 				createdAt: cs.val().createdAt
 			}
 			data.push(review)
-		})
+		})		
 		return data
 	},
 	getReviewById: async function(reviewId) {
@@ -61,10 +62,9 @@ module.exports = {
 	},
 	postReview: async (review) => {
 		const now = new Date();
+		const reviewer = await getUserById(review.uId)
 		const data = {
-			reviewer: {
-				id: review.uId
-			},
+			reviewer,
 			book: {
 				name: review.bookName,
 				image: "url"
@@ -76,7 +76,7 @@ module.exports = {
 				like: 0,
 			},
 			createdAt: Date.parse(now),			
-			comment:[]
+			comment: []
 		}
 		await database.ref('post').push(data)
 		getMessage(review.uId)
@@ -89,15 +89,16 @@ module.exports = {
 				setTimeout(() => {
 					microgear.disconnect()
 				}, 1500);
-				return Promise.resolve('success')
+				return "ok"
 			})
 	},
 	comment: async function(review) {
 		try {
 			await hasReviewId(review.reviewId)
 			await validateComment(review)
+			const commenter = await getUserById(review.uId)
 			database.ref('post').child(`/${review.reviewId}/comment`).push({
-				uId: review.uId,
+				commenter,
 				commentContent: review.commentContent,
 				reviewId: review.reviewId
 			})
@@ -206,5 +207,17 @@ async function getMessage(reviewerId) {
 	return { 
 		allFollower,
 		lastKey 
+	}
+}
+
+async function getUserById(id) {
+	try {
+		const user = await admin.auth().getUser(id)
+		return {
+			id: user.uid,
+			email: user.email
+		}
+	}catch(err) {
+		return Promise.reject(CustomError(400, 'uId not found'))
 	}
 }

@@ -3,6 +3,13 @@ var config = require('./config')
 var database = config.firebase
 var microgear = config.microgear
 
+var admin = require('firebase-admin')
+var serviceAccount = require("../utils/key.json");
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: "https://readershare-103ec.firebaseio.com"
+});
+
 module.exports = {
 	getAllReview: async function() {
 		const s = await database.ref('post').limitToFirst(5).once('value')

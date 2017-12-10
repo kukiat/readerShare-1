@@ -136,7 +136,7 @@ module.exports = {
 					subscribe: data[3]
 				}
 				resolve(userProfile)
-			})
+			}).catch(()=>{ reject('error') })
 		})
 	}
 }
@@ -151,7 +151,7 @@ async function getUserProfile(uId){
 				image: userRecord.photoURL || ''
 			}
 			resolve(profile)
-		})
+		}).catch(()=>reject())
 	})
 }
 async function getUserBookmark(uId){

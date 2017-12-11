@@ -39,14 +39,17 @@ module.exports = {
 			review.child('comment').forEach(cs=>{
 				comment.push(Object.assign({}, {id: cs.key}, cs.val()))
 			})
-			const reviewDetail = {
+			let reviewDetail = {
 				id: review.key,
 				book: review.val().book,
-				reviewer: review.val().reviewer,				
+				reviewer: review.val().reviewer.id,				
 				review: review.val().review,
 				createdAt: review.val().createdAt,
 				comment
 			}
+			const user = await getUserProfile(reviewDetail.reviewer)
+			reviewDetail.reviewer = user
+			
 			return reviewDetail
 		}catch(err) {
 			throw err
@@ -140,7 +143,7 @@ module.exports = {
 					subscribe: data[3]
 				}
 				resolve(userProfile)
-			}).catch(()=>{ reject('error') })
+			})
 		})
 	}
 }
@@ -155,7 +158,7 @@ async function getUserProfile(uId){
 				image: userRecord.photoURL || ''
 			}
 			resolve(profile)
-		}).catch(()=>reject())
+		})
 	})
 }
 async function getUserBookmark(uId){

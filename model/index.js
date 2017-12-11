@@ -90,12 +90,12 @@ module.exports = {
 	},
 	postReview: async (review) => {
 		const now = new Date();
-		const reviewer = await getUserProfile(review.uId)
+		const reviewer = await getUserProfilePost(review.uId)
 		const data = {
 			reviewer,
 			book: {
 				name: review.bookName,
-				image: "url"
+				image: ""
 			},
 			review:	{
 				title: review.reviewTitle,
@@ -191,6 +191,20 @@ async function getUserProfile(uId){
 		})
 	})
 }
+async function getUserProfilePost(uId){
+	return await new Promise((resolve,reject)=>{
+		admin.auth().getUser(uId).then((userRecord)=>{
+			profile = {
+				id: userRecord.uid,
+				email: userRecord.email,
+				name: userRecord.displayName || '',
+				image: userRecord.photoURL || ''
+			}
+			resolve(profile)
+		})
+	})
+}
+
 async function getUserBookmark(uId){
 	return await new Promise((resolve,reject)=>{
 		database.ref('bookmark').orderByChild('uId').equalTo(uId).on('value', function(snapshot) {

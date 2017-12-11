@@ -14,17 +14,21 @@ admin.initializeApp({
 module.exports = {
 	getAllReview: async function() {
 		const s = await database.ref('post').limitToFirst(5).once('value')
-		const data = []
+		let data = []
 		s.forEach((cs) => {
 			const review = {
 				id: cs.key,
 				book: cs.val().book,
-				reviewer: cs.val().reviewer,
+				reviewer: cs.val().reviewer.id,
 				review: cs.val().review,
 				createdAt: cs.val().createdAt
 			}
 			data.push(review)
-		})		
+		})
+		for(let i in data){
+			const user = await getUserProfile(data[i].reviewer)
+			data[i].reviewer = user
+		}
 		return data
 	},
 	getReviewById: async function(reviewId) {
@@ -62,7 +66,7 @@ module.exports = {
 	},
 	postReview: async (review) => {
 		const now = new Date();
-		const reviewer = await getUserById(review.uId)
+		const reviewer = await getUserProfile(review.uId)
 		const data = {
 			reviewer,
 			book: {

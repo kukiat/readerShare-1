@@ -46,7 +46,7 @@ router.get('/getprofile/:uid', async function(req, res, next) {
 router.post('/subscribe', async function(req, res, next) {
   try {
     const result = await Model.subscribe(req.body.subscriber, req.body.follower)
-    res.status(200).send(result)
+    res.status(result.code).send(result.message)
   } catch(err) {
     r.respondError(res)(err)
   }

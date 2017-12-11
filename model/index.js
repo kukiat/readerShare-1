@@ -13,7 +13,7 @@ admin.initializeApp({
 
 module.exports = {
 	getAllReview: async function() {
-		const s = await database.ref('post').limitToFirst(5).once('value')
+		const s = await database.ref('post').limitToLast(10).once('value')
 		let data = []
 		s.forEach((cs) => {
 			const review = {
@@ -238,6 +238,7 @@ async function getUserPosts(uId){
 }
 async function getUserSubscribe(uId){
 	return await new Promise((resolve,reject)=>{
+		if(isBlank(uId)) reject()
 		database.ref('subscribe').orderByChild('follower').equalTo(uId).on('value', function(snapshot) {
 			let subscribeses = []
 			snapshot.forEach( data => {

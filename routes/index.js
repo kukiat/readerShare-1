@@ -45,8 +45,17 @@ router.get('/getprofile/:uid', async function(req, res, next) {
 
 router.post('/subscribe', async function(req, res, next) {
   try {
-    await Model.subscribe(req.body.subscriber, req.body.follower)
-    r.respondSuccess(res)()
+    const result = await Model.subscribe(req.body.subscriber, req.body.follower)
+    r.respondResult(res)(result)
+  } catch(err) {
+    r.respondError(res)(err)
+  }
+})
+
+router.get('/getSubscribe/:uId', async function(req, res, next) {
+  try {
+    const result = await Model.getSubscribe(req.params.uId)
+    r.respondResult(res)(result)
   } catch(err) {
     r.respondError(res)(err)
   }

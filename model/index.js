@@ -49,7 +49,7 @@ module.exports = {
 			}
 			const user = await getUserProfile(reviewDetail.reviewer)
 			reviewDetail.reviewer = user
-			
+
 			return reviewDetail
 		}catch(err) {
 			throw err
@@ -58,14 +58,29 @@ module.exports = {
 	subscribe: async function(subscriber, follower) {
 			try {
 				await validateSubscribe(subscriber, follower)
-				await checkSubscribe(subscriber, follower)
-				database.ref('subscribe').push({ 
-					subscriber, 
-					follower 
-				})
+				const result = await checkSubscribe(subscriber, follower)
+				console.log(result)
+				if(result) {
+					database.ref('subscribe').push({ 
+						subscriber, 
+						follower 
+					})
+					return 'success sub'
+				}
+				return 'calcel sub'
 			} catch(err) {
 				throw err
 			}
+	},
+	getSubscribe: async function(uId) {
+		const s = await database.ref('subscribe').once('value')
+		const data = []
+		s.forEach((cs)=>{
+			if(cs.val().follower == uId){
+				data.push(cs.val().subscriber)
+			}
+		})
+		return data
 	},
 	postReview: async (review) => {
 		const now = new Date();
@@ -273,10 +288,11 @@ async function checkSubscribe(subscriber, follower) {
 	return await new Promise((resolve, reject) => {
 		s.forEach(cs => {
 			if(cs.val().subscriber == subscriber && cs.val().follower == follower) {
-				reject(CustomError(400, 'already subscribe'))
+				database.ref('subscribe').child(cs.key).remove()
+				resolve(false)
 			}
 		})
-		resolve()
+		resolve(true)
 	})
 }
 

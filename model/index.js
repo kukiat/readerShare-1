@@ -154,18 +154,27 @@ module.exports = {
 		}
 	},
 	getProfile: async function(uId){
-		return await new Promise((resolve,reject)=>{
-			Promise.all([getUserProfile(uId),getUserBookmark(uId),getUserPosts(uId),getUserSubscribe(uId)])
-			.then((data)=>{
-				const userProfile = {
-					profile: data[0],
-					bookmark: data[1],
-					posts: data[2],
-					subscribe: data[3]
+			try{
+				const x = await getUserProfile(uId)
+				const xx = await getUserBookmark(uId)
+				const xxx = await getUserPosts(uId)
+				const xxxx = await getUserSubscribe(uId)
+				let userProfile = {
+					profile: x,
+					bookmark: xx,
+					posts: xxx,
+					subscribe: xxxx
 				}
-				resolve(userProfile)
-			})
-		})
+				const date = []
+				for(let i in userProfile.subscribe) {
+					const user = await getUserProfile(userProfile.subscribe[i].subscriber)
+					date.push(user)
+				}
+				userProfile.subscribe = date
+				return Promise.resolve(userProfile)
+			}catch(err) {
+				throw err
+			}
 	}
 }
 

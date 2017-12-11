@@ -13,7 +13,7 @@ admin.initializeApp({
 
 module.exports = {
 	getAllReview: async function() {
-		const s = await database.ref('post').limitToLast(10).once('value')
+		const s = await database.ref('post').limitToFirst(10).once('value')
 		let data = []
 		s.forEach((cs) => {
 			const review = {
@@ -108,16 +108,26 @@ module.exports = {
 		}
 		await database.ref('post').push(data)
 		getMessage(review.uId)
-			.then(message => {
-				microgear.connect('noti', () => {
-					microgear.on('connected', () => {
-						microgear.publish('/message', JSON.stringify(message))
+			.then((message) => {
+				database.ref('post').child(message.lastKey).once('value')
+				.then((reviews)=>{
+					const response = {
+						allFollower: message.allFollower,
+						bookName: reviews.val().book.name,
+						reviewerName: reviews.val().reviewer.name || '',
+						lastKey: message.lastKey
+					}
+					console.log(response)
+					microgear.connect('noti', () => {
+						microgear.on('connected', () => {
+							microgear.publish('/message', JSON.stringify(response))
+						})
 					})
+					setTimeout(() => {
+						microgear.disconnect()
+					}, 3000);
+					return "ok"
 				})
-				setTimeout(() => {
-					microgear.disconnect()
-				}, 1500);
-				return "ok"
 			})
 	},
 	comment: async function(review) {

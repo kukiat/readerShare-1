@@ -13,7 +13,7 @@ admin.initializeApp({
 
 module.exports = {
 	getAllReview: async function() {
-		const s = await database.ref('post').orderByChild('createdAt').limitToLast(7).once('value')
+		const s = await database.ref('post').orderByChild('createdAt').limitToLast(5).once('value')
 		let data = []
 		s.forEach((cs) => {
 			const review = {
@@ -117,7 +117,6 @@ module.exports = {
 						reviewerName: reviews.val().reviewer.name || '',
 						lastKey: message.lastKey
 					}
-					console.log(response)
 					microgear.connect('noti', () => {
 						microgear.on('connected', () => {
 							microgear.publish('/message', JSON.stringify(response))
@@ -344,24 +343,21 @@ async function checkSubscribe(subscriber, follower) {
 
 async function getMessage(reviewerId) {
 	let allFollower = []
-	const s = await database.ref('subscribe').once('value')
-	s.forEach(cs => {
+	const allSubscribe = await database.ref('subscribe').once('value')
+	allSubscribe.forEach(cs => {
 		if(cs.val().subscriber == reviewerId){
 			allFollower.push(cs.val().follower)
 		}
 	})
 
-	const ss = await database.ref('post').once('value')
+	const allPost = await database.ref('post').once('value')
 	let lastKey
-	ss.forEach(cs => {
+	allPost.forEach(cs => {
 		if(cs.val().reviewer.id == reviewerId) {
 			lastKey = cs.key
 		}
 	})
-	return { 
-		allFollower,
-		lastKey 
-	}
+	return { allFollower, lastKey }
 }
 
 async function getUserById(id) {

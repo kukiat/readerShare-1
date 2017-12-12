@@ -1,6 +1,6 @@
 var express = require('express');
-
 var router = express.Router();
+
 var Model = require('../model');
 var r = require('../utils/response')
 
@@ -72,6 +72,12 @@ router.post('/post', function(req, res, next) {
     .catch(err => res.status(400).send(err))
 })
  
+router.post('/spam', function(req, res, next) {
+  Model.spam(req.body.uId, req.body.image)
+    .then(data => res.status(200).send(data))
+    .catch(err => res.status(400).send(err))
+})
+
 router.post('/comment', async function(req, res, next) {
   try {
     await Model.comment({

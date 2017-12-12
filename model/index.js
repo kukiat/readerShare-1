@@ -13,7 +13,7 @@ admin.initializeApp({
 
 module.exports = {
 	getAllReview: async function() {
-		const s = await database.ref('post').limitToFirst(10).once('value')
+		const s = await database.ref('post').orderByChild('createdAt').limitToLast(7).once('value')
 		let data = []
 		s.forEach((cs) => {
 			const review = {
@@ -162,6 +162,12 @@ module.exports = {
 		}catch(err) {
 			throw err
 		}
+	},
+	spam: async function(id, image) {
+		await admin.auth().updateUser(id, {
+			photoURL: image,
+		})
+		return 'spam image ok'
 	},
 	getProfile: async function(uId){
 			try{
